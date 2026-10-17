@@ -1,0 +1,46 @@
+name: Assemble verified installer
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing draft release tag
+        required: true
+        default: v1.1.1
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: Download parts, verify, and upload installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$TAG" = 'v1.1.1'
+          test "$(gh release view "$TAG" --json isDraft --jq .isDraft)" = 'true'
+          mkdir parts
+          gh release download "$TAG" --pattern 'ds-1.1.1-part-*.bin' --dir parts
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected = '26c1fc6885a5018dd11fd9e3a65665c86f85e37a6cff048c8956c85d9b4ba1a5'
+          parts = sorted(Path('parts').glob('ds-1.1.1-part-*.bin'))
+          assert len(parts) == 36, f'Expected 36 parts, got {len(parts)}'
+          output = Path('Doctor-Stream-1.1.1-Windows-x64-Setup.exe')
+          with output.open('wb') as target:
+              for index, part in enumerate(parts, 1):
+                  assert part.name == f'ds-1.1.1-part-{index:03d}.bin'
+                  with part.open('rb') as source:
+                      while chunk := source.read(1024 * 1024):
+                          target.write(chunk)
+          assert output.stat().st_size == 149165362
+          with output.open('rb') as source:
+              assert hashlib.file_digest(source, 'sha256').hexdigest() == expected
+          print('Installer byte count and SHA-256 verified before upload.')
+          PY
+          gh release upload "$TAG" 'Doctor-Stream-1.1.1-Windows-x64-Setup.exe'
