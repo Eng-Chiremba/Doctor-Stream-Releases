@@ -4,9 +4,9 @@ A Windows application for saving YouTube videos you own or have permission to do
 
 ## Download
 
-[Download Doctor Stream 1.1.1 for Windows x64](https://github.com/Eng-Chiremba/Doctor-Stream-Releases/releases/download/v1.1.1/Doctor-Stream-1.1.1-Windows-x64-Setup.exe)
+The 1.1.1 beta release is prepared as a draft. The public installer download is not available yet.
 
-[PDF release notes](https://github.com/Eng-Chiremba/Doctor-Stream-Releases/releases/download/v1.1.1/Doctor-Stream-1.1.1-Release-notes.pdf) | [All releases](https://github.com/Eng-Chiremba/Doctor-Stream-Releases/releases)
+[Releases](https://github.com/Eng-Chiremba/Doctor-Stream-Releases/releases)
 
 ## Features
 
@@ -43,3 +43,4 @@ SHA-256 of `Doctor-Stream-1.1.1-Windows-x64-Setup.exe`:
 ```
 
 This repository contains release documentation and downloads. Application source code is not included.
+
